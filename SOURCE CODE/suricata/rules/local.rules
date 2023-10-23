@@ -1,0 +1,18 @@
+#PING
+#alert icmp any any -> any any (msg:"PING"; classtype:icmp-event; sid:1;)
+
+
+#SQLI
+#alert tcp any any -> 192.168.56.0/24 80 (msg:"SQLI"; classtype:web-application-attack; sid:2; priority:1; content:"1";)
+alert tcp any any -> 192.168.242.0/24 80 (msg:"SQLI"; classtype:web-application-attack; sid:3; priority:2; content:"%25%27";)
+
+
+#DoS
+alert tcp any any -> $HOME_NET 80 (msg:"DoS"; classtype:attempted-dos; sid:4; flags:S; flow:stateless; threshold:type both, track by_dst, count 70, seconds 10;)
+alert tcp any any -> $HOME_NET 80 (msg:"DoS"; classtype:attempted-dos; sid:5; flags:S; flow:to_server; threshold:type threshold, track by_src, count 70, seconds 10;)
+
+
+#SCANNING
+alert tcp $EXTERNAL_NET any -> $HOME_NET 161 (msg:"PORT_SCANNING"; classtype:attempted-recon; sid:6; flow:stateless;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 705 (msg:"PORT_SCANNING"; classtype:attempted-recon; sid:7; flow:stateless;)
+

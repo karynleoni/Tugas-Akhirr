@@ -1,0 +1,24 @@
+# $Id: local.rules,v 1.11 2004/07/23 20:15:44 bmc Exp $
+# ----------------
+# LOCAL RULES
+# ----------------
+# This file intentionally does not come with signatures.  Put your local
+# additions here.
+
+#PING
+#alert icmp any any -> any any (msg:"PING"; classtype:icmp-event; sid:1000001;)
+
+
+#SQLI
+#alert tcp any any -> 192.168.56.0/24 80 (msg:"SQLI"; classtype:web-application-attack; sid:1000002; content:"1";)
+alert tcp any any -> 192.168.242.0/24 80 (msg:"SQLI"; classtype:web-application-attack; sid:1000003; content:"%25%27";)
+
+
+#DoS
+alert tcp any any -> $HOME_NET 80 (msg:"DoS"; classtype:attempted-dos; sid:1000004; flags:S; flow:stateless; threshold:type both, track by_dst, count 70, seconds 10;)
+alert tcp any any -> $HOME_NET 80 (msg:"DoS"; classtype:attempted-dos; sid:1000005; flags:S; flow:to_server; threshold:type threshold, track by_src, count 70, seconds 10;)
+
+
+#SCANNING
+alert tcp $EXTERNAL_NET any -> $HOME_NET 161 (msg:"PORT_SCANNING"; classtype:attempted-recon; sid:1000006; flow:stateless;)
+#alert tcp $EXTERNAL_NET any -> $HOME_NET 705 (msg:"PORT_SCANNING"; classtype:attempted-recon; sid:1000007; flow:stateless;)
